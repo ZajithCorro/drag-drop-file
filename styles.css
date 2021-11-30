@@ -19,7 +19,6 @@ body {
 
 .modal {
 	width: 800px;
-	height: 500px;
 	background-color: #fff;
 	border-radius: 10px;
 	padding: 2rem 2.5rem;
@@ -31,7 +30,6 @@ body {
 	justify-content: center;
 	align-items: center;
 	width: 100%;
-	height: 100%;
 	border: 3px dashed #7c7a7a;
 	border-radius: 10px;
 	padding: 1rem;
@@ -43,4 +41,32 @@ body {
 
 .input-file-dragzone input {
 	display: none;
+}
+
+.input-file-list {
+	margin-top: 1rem;
+}
+
+.input-file-list ul {
+	list-style: none;
+	padding: 0;
+}
+
+.input-file-list ul li {
+	display: flex;
+	align-items: center;
+	padding: 0.75rem 0.5rem;
+	border-bottom: 1px solid #aeadad91;
+}
+
+.input-file-list ul li:last-child {
+	border-bottom: none;
+}
+
+.input-file-list ul li img {
+	width: 30px;
+}
+
+.input-file-list ul li p {
+	margin-left: 0.75rem;
 }
