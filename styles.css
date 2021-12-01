@@ -24,7 +24,7 @@ body {
 	padding: 2rem 2.5rem;
 }
 
-.input-file-dragzone {
+.file-dragzone {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -35,38 +35,63 @@ body {
 	padding: 1rem;
 }
 
-.input-file-dragzone.active {
+.file-dragzone.active {
 	border: 3px dashed var(--background-color);
 }
 
-.input-file-dragzone input {
+.file-dragzone input {
 	display: none;
 }
 
-.input-file-list {
+.file-list {
 	margin-top: 1rem;
 }
 
-.input-file-list ul {
+.file-list ul {
 	list-style: none;
 	padding: 0;
 }
 
-.input-file-list ul li {
+.file-list .file-item {
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	padding: 0.75rem 0.5rem;
 	border-bottom: 1px solid #aeadad91;
 }
 
-.input-file-list ul li:last-child {
+.file-list .file-item:hover > .file-item-actions {
+	opacity: 1;
+}
+
+.file-list .file-item:last-child {
 	border-bottom: none;
 }
 
-.input-file-list ul li img {
-	width: 30px;
+.file-list .file-item .file-item-info {
+	display: flex;
+	align-items: center;
 }
 
-.input-file-list ul li p {
-	margin-left: 0.75rem;
+.file-list .file-item .file-item-info img {
+	width: 20px;
+}
+
+.file-list .file-item .file-item-info p {
+	margin-left: 0.85rem;
+}
+
+.file-list .file-item .file-item-actions {
+	display: flex;
+	gap: 5px;
+	opacity: 0;
+	transition: all 0.2s ease-in-out;
+}
+
+.file-list .file-item .file-item-actions span {
+	background-color: #747272;
+	color: white;
+	padding: 0.25rem 0.5rem;
+	border-radius: 10px;
+	cursor: pointer;
 }
