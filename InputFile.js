@@ -6,7 +6,8 @@ const filesExtensions = {
 
 class InputFile {
 	constructor(selector, config) {
-		this._selectorContainer = document.querySelector(`${selector} .input-file-dragzone`);
+		this._selector = selector;
+		this._selectorContainer = document.querySelector(`${selector} .file-dragzone`);
 		this._btnAuxFile = document.querySelector(`${selector} #file-btn`);
 		this._inputFile = document.querySelector(`${selector} #file-input`);
 		this._listFilesToMatch = config.files;
@@ -22,6 +23,7 @@ class InputFile {
 		this._selectorContainer.addEventListener('dragleave', this._dragLeaveEvent.bind(this));
 		this._selectorContainer.addEventListener('drop', this._dragDropEvent.bind(this));
 		this._btnAuxFile.addEventListener('click', this._clickBtnAuxEvent.bind(this));
+		this._inputFile.addEventListener('change', this._inputFileEventChange.bind(this));
 	}
 
 	_dragOverEvent(event) {
@@ -30,10 +32,12 @@ class InputFile {
 	}
 
 	_dragEnterEvent(event) {
+		event.preventDefault();
 		this._selectorContainer.classList.add('active');
 	}
 
 	_dragLeaveEvent(event) {
+		event.preventDefault();
 		this._selectorContainer.classList.remove('active');
 	}
 
@@ -41,12 +45,68 @@ class InputFile {
 		event.preventDefault();
 
 		this._resetErrors();
-		const files = Array.from(event.dataTransfer.files);
 		this._selectorContainer.classList.remove('active');
 
-		this._checkFilesCorrect(files);
+		const files = Array.from(event.dataTransfer.files);
+		this._addFilesToList(files);
 
-		console.log(this.errors);
+		//this._checkFilesCorrect(files);
+
+		//console.log(this.errors);
+	}
+
+	_inputFileEventChange(event) {
+		const files = Array.from(event.target.files);
+		this._addFilesToList(files);
+	}
+
+	_addFilesToList(files) {
+		const fileList = document.querySelector(`${this._selector} .file-list ul`);
+
+		files.forEach((file, index) => {
+			const { name } = file;
+			const id = Date.now() * Math.floor(Math.random() * 100 + 1);
+			const li = this._generateHTMLFile(id, name);
+
+			fileList.appendChild(li);
+			this.validateFiles.push(file);
+		});
+
+		this._addListenersActions();
+	}
+
+	_addListenersActions() {
+		const btnsSeeDocument = document.querySelectorAll(
+			`${this._selector} .file-item-actions span[data-action="ver"]`
+		);
+		const btnsDeleteDocument = document.querySelectorAll(
+			`${this._selector} .file-item-actions span[data-action="eliminar"]`
+		);
+
+		btnsDeleteDocument.forEach((btn) => {
+			btn.addEventListener('click', this._deleteFileEvent.bind(this));
+		});
+
+		btnsSeeDocument.forEach((btn) => {
+			btn.addEventListener('click', this._seeFileEvent.bind(this));
+		});
+	}
+
+	_seeFileEvent(event) {
+		const { target } = event;
+		const { id } = target.closest('.file-item').dataset;
+
+		console.log(id);
+	}
+
+	_deleteFileEvent(event) {
+		const { target } = event;
+		const li = target.closest('.file-item');
+		const id = li.dataset.id;
+
+		const filteredFiles = this.validateFiles.filter((file) => file.id !== id);
+		li.remove();
+		this.validateFiles = filteredFiles;
 	}
 
 	_clickBtnAuxEvent() {
@@ -74,6 +134,23 @@ class InputFile {
 				}
 			}
 		});
+	}
+
+	_generateHTMLFile(id, fileName) {
+		const li = document.createElement('li');
+		li.classList.add('file-item');
+		li.dataset.id = id;
+		li.innerHTML = `<div class="file-item-info">
+        <img src="./images/pdf.png" alt="PDF file icon" />
+        <p>${fileName}</p>
+      </div>
+      <div class="file-item-actions">
+        <span data-action="ver">Ver</span>
+        <span data-action="eliminar">Eliminar</button>
+      </div>
+    `;
+
+		return li;
 	}
 }
 
