@@ -64,9 +64,8 @@ class InputFile {
 		const fileList = document.querySelector(`${this._selector} .file-list ul`);
 
 		files.forEach((file, index) => {
-			const { name } = file;
 			const id = Date.now() * Math.floor(Math.random() * 100 + 1);
-			const li = this._generateHTMLFile(id, name);
+			const li = this._generateHTMLFile(id, file);
 
 			fileList.appendChild(li);
 			this.validateFiles.push(file);
@@ -136,13 +135,16 @@ class InputFile {
 		});
 	}
 
-	_generateHTMLFile(id, fileName) {
+	_generateHTMLFile(id, file) {
+		const { name, type } = file;
 		const li = document.createElement('li');
+		const imageToRender = this._getImageByType(type);
+
 		li.classList.add('file-item');
 		li.dataset.id = id;
 		li.innerHTML = `<div class="file-item-info">
-        <img src="./images/pdf.png" alt="PDF file icon" />
-        <p>${fileName}</p>
+        <img src="${imageToRender}" alt="PDF file icon" />
+        <p>${name}</p>
       </div>
       <div class="file-item-actions">
         <span data-action="ver">Ver</span>
@@ -151,6 +153,19 @@ class InputFile {
     `;
 
 		return li;
+	}
+
+	_getImageByType(type) {
+		switch (type) {
+			case 'image/jpeg':
+				return './images/file.png';
+			case 'image/png':
+				return './images/file.png';
+			case 'application/pdf':
+				return './images/pdf.png';
+			default:
+				return './images/file.png';
+		}
 	}
 }
 
