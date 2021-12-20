@@ -11,7 +11,6 @@ class InputFile {
     this._btnAuxFile = document.querySelector(`${selector} #file-btn`);
     this._inputFile = document.querySelector(`${selector} #file-input`);
     this._listFilesToMatch = config.files;
-    this.errors = [];
     this.validateFiles = [];
 
     this.init();
@@ -90,21 +89,19 @@ class InputFile {
 
   _seeFileEvent(event) {
     const { target } = event;
-    const { id } = target.closest('.file-item').dataset;
 
-    console.log(id);
+    return console.log(target);
   }
 
   _deleteFileEvent(event) {
     const { target } = event;
     const li = target.closest('.file-item');
-    const id = li.dataset.id;
+    const fileName = li.querySelector('p').textContent;
 
-    const filteredFiles = this.validateFiles.filter((file) => file.id !== id);
+    const filteredFiles = this.validateFiles.filter((file) => file.name !== fileName);
 
     li.remove();
     this.validateFiles = filteredFiles;
-    console.log(this.validateFiles);
   }
 
   _clickBtnAuxEvent() {
