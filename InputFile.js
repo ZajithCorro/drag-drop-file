@@ -43,32 +43,29 @@ class InputFile {
 
 	_dragDropEvent(event) {
 		event.preventDefault();
-
-		this._resetErrors();
 		this._selectorContainer.classList.remove('active');
 
 		const files = Array.from(event.dataTransfer.files);
-		this._addFilesToList(files);
+		const filesToRender = this._checkFilesCorrect(files);
 
-		//this._checkFilesCorrect(files);
-
-		//console.log(this.errors);
+		this._renderFilesInList(filesToRender);
 	}
 
 	_inputFileEventChange(event) {
 		const files = Array.from(event.target.files);
-		this._addFilesToList(files);
+		const filesToRender = this._checkFilesCorrect(files);
+
+		this._renderFilesInList(filesToRender);
 	}
 
-	_addFilesToList(files) {
+	_renderFilesInList(files) {
 		const fileList = document.querySelector(`${this._selector} .file-list ul`);
 
-		files.forEach((file, index) => {
+		files.forEach((file) => {
 			const id = Date.now() * Math.floor(Math.random() * 100 + 1);
 			const li = this._generateHTMLFile(id, file);
 
 			fileList.appendChild(li);
-			this.validateFiles.push(file);
 		});
 
 		this._addListenersActions();
@@ -83,10 +80,12 @@ class InputFile {
 		);
 
 		btnsDeleteDocument.forEach((btn) => {
+			btn.removeEventListener('click', this._deleteFileEvent.bind(this));
 			btn.addEventListener('click', this._deleteFileEvent.bind(this));
 		});
 
 		btnsSeeDocument.forEach((btn) => {
+			btn.removeEventListener('click', this._seeFileEvent.bind(this));
 			btn.addEventListener('click', this._seeFileEvent.bind(this));
 		});
 	}
@@ -104,8 +103,10 @@ class InputFile {
 		const id = li.dataset.id;
 
 		const filteredFiles = this.validateFiles.filter((file) => file.id !== id);
+
 		li.remove();
 		this.validateFiles = filteredFiles;
+		console.log(this.validateFiles);
 	}
 
 	_clickBtnAuxEvent() {
@@ -117,22 +118,26 @@ class InputFile {
 	}
 
 	_checkFilesCorrect(listOfFiles) {
-		if (this._listFilesToMatch.lenght === 0) return true;
+		const correctFiles = [];
 
-		this._listFilesToMatch.forEach((element) => {
-			if (element.required) {
-				const fileExists = listOfFiles.some((file) => {
-					const fileName = file.name.split('.')[0];
-					const fileType = file.type;
+		listOfFiles.forEach((file) => {
+			const { name, type } = file;
+			const fileName = name.split('.')[0];
+			const fileType = type;
 
-					return fileName === element.name && filesExtensions[element.type] === fileType;
-				});
+			const isAcepted = this._listFilesToMatch.some(
+				(file) => file.name === fileName && filesExtensions[file.type] === fileType
+			);
 
-				if (!fileExists) {
-					this.errors.push(`El archivo ${element.name} es requerido`);
-				}
+			const wasAdded = this.validateFiles.some((file) => file.name === name);
+
+			if (isAcepted && !wasAdded) {
+				correctFiles.push(file);
+				this.validateFiles.push(file);
 			}
 		});
+
+		return correctFiles;
 	}
 
 	_generateHTMLFile(id, file) {
@@ -166,6 +171,10 @@ class InputFile {
 			default:
 				return './images/file.png';
 		}
+	}
+
+	get files() {
+		return this.validateFiles;
 	}
 }
 
