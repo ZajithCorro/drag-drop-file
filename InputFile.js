@@ -168,6 +168,22 @@ class InputFile {
     }
   }
 
+  get isValid() {
+    const errors = [];
+
+    this._listFilesToMatch.forEach((file) => {
+      const { name, required } = file;
+
+      if (!required) return;
+
+      const isIncluded = this.validateFiles.some((file) => file.name.split('.')[0] === name);
+
+      if (!isIncluded) errors.push(`El archivo ${name} es requerido`);
+    });
+
+    return { isValid: errors.length === 0, errors };
+  }
+
   get files() {
     return this.validateFiles;
   }
